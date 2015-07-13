@@ -1,0 +1,26 @@
+#!/bin/bash
+find "Source Files/" -type d | sed 's/Source Files\///g' | sed -n '1!p' | grep "x\|scalable" | grep "/" | while read folderName; do
+	ls "Source Files/$folderName" | cut -d '"' -f 2 | while read fileName; do
+		find "/usr/share/icons/Numix-Circle-Light/" -maxdepth 1 -type d | sed 's/\/usr\/share\/icons\/Numix-Circle-Light\///g' | sed -n '1!p' | while read numixSize; do
+			foldname=${folderName:$(expr index "$folderName" "/")}
+			if [ -d "/usr/share/icons/Numix-Circle-Light/$numixSize/$foldname" ];
+			then
+				#echo "/usr/share/icons/Numix-Circle-Light/$numixSize/$folderName/ $fileName"
+				find "/usr/share/icons/Numix-Circle-Light/$numixSize/$foldname/" -lname "$fileName" -printf "%f\n" | cut -d '"' -f 2 | while read ic; do
+					#echo "linking $fileName to $folderName/$ic"
+					rm "$folderName/$ic" > /dev/null 2>&1
+					ln -s "$fileName" "$folderName/$ic"
+				done
+			fi
+			if [ -d "/usr/share/icons/Numix/$numixSize/$foldname" ];
+			then
+				#echo "/usr/share/icons/Numix-Circle-Light/$numixSize/$folderName/ $fileName"
+				find "/usr/share/icons/Numix/$numixSize/$foldname/" -lname "$fileName" -printf "%f\n" | cut -d '"' -f 2 | while read ic; do
+					#echo "linking $fileName to $folderName/$ic"
+					rm "$folderName/$ic" > /dev/null 2>&1
+					ln -s "$fileName" "$folderName/$ic"
+				done
+			fi
+		done
+	done
+done
